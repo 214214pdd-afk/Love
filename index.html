@@ -153,6 +153,8 @@
     cursor: pointer;
     perspective: 400px;
     transition: transform 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   .blind-box:active { transform: scale(0.95); }
   .blind-box.opened { pointer-events: none; opacity: 0.6; pointer-events: none; }
@@ -184,6 +186,7 @@
     font-size: 26px; font-weight: 700;
     color: rgba(255,255,255,0.9);
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    pointer-events: none;
   }
 
   .box-lid {
@@ -194,6 +197,7 @@
     transform-origin: right bottom;
     transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
     box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+    pointer-events: none;
   }
   .blind-box.opening .box-lid {
     transform: rotateX(-130deg) translateY(-10px);
@@ -206,6 +210,7 @@
     top: -8px; left: 33px;
     border-radius: 3px 3px 0 0;
     z-index: 2;
+    pointer-events: none;
   }
 
   .box-1 { --box-color: #ff9eb5; --box-color-dark: #e07d95; --ribbon-color: #ffd1dc; }
@@ -321,12 +326,12 @@
   }
 
   @keyframes float {
-    0%,100% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
+    0%,100% { top: 0px; }
+    50% { top: -8px; }
   }
   @keyframes floatSlow {
-    0%,100% { transform: translateY(0px); }
-    50% { transform: translateY(-4px); }
+    0%,100% { top: 0px; }
+    50% { top: -4px; }
   }
   .ipad-wrapper { animation: floatSlow 4s ease-in-out infinite; }
   .blind-box { animation: float 3s ease-in-out infinite; }
@@ -367,21 +372,21 @@
   <div class="birthday-badge" id="birthdayBadge"></div>
 
   <div class="boxes-section" id="boxesSection">
-    <div class="blind-box box-1" data-box="1" onclick="openBox(1)">
+    <div class="blind-box box-1" data-box="1">
       <div class="box-ribbon"></div>
       <div class="box-lid"></div>
       <div class="box-face box-front">
         <div class="box-question">?</div>
       </div>
     </div>
-    <div class="blind-box box-2" data-box="2" onclick="openBox(2)">
+    <div class="blind-box box-2" data-box="2">
       <div class="box-ribbon"></div>
       <div class="box-lid"></div>
       <div class="box-face box-front">
         <div class="box-question">?</div>
       </div>
     </div>
-    <div class="blind-box box-3" data-box="3" onclick="openBox(3)">
+    <div class="blind-box box-3" data-box="3">
       <div class="box-ribbon"></div>
       <div class="box-lid"></div>
       <div class="box-face box-front">
@@ -396,7 +401,7 @@
 <div class="card-popup" id="cardPopup"></div>
 <div class="confetti-container" id="confettiContainer"></div>
 
-<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+<button class="music-btn" id="musicBtn">🎵</button>
 
 <script>
 (function() {
@@ -705,6 +710,22 @@
       text: '🎁 iPad 已解锁～<br>快来找我领礼物吧！<br>爱你，小羊 ❤️'
     }), 1500);
   }
+
+  // 绑定事件（同时支持桌面 & 移动端）
+  document.querySelectorAll('.blind-box').forEach(box => {
+    let fired = false;
+    const handler = (e) => {
+      if (fired) return;
+      fired = true;
+      e.preventDefault();
+      openBox(parseInt(box.dataset.box));
+      setTimeout(() => { fired = false; }, 500);
+    };
+    box.addEventListener('click', handler);
+    box.addEventListener('pointerdown', handler);
+  });
+  document.getElementById('musicBtn').addEventListener('click', toggleMusic);
+  document.getElementById('overlay').addEventListener('click', closeCard);
 
   // 首次用户交互时初始化音频上下文
   document.addEventListener('click', initAudio, { once: true });
