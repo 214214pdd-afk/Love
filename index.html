@@ -65,20 +65,58 @@
   }
   .love-text .name { font-size: 20px; font-weight: 600; color: #ffb8d4; display: block; margin-bottom: 8px; }
 
-  /* 合照 */
-  .photo-card {
+  /* 合照相册 */
+  .photo-album {
     width: 100%;
     max-width: 320px;
+    position: relative;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     animation: fadeIn 1.8s ease 0.5s forwards;
     opacity: 0;
   }
-  .photo-card img {
+  .photo-track {
+    display: flex;
+    transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .photo-slide {
+    min-width: 100%;
+  }
+  .photo-slide img {
     width: 100%;
     display: block;
     border-radius: 16px;
+  }
+  .photo-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+  }
+  .photo-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    transition: all 0.3s ease;
+  }
+  .photo-dot.active {
+    background: #fff;
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* 美甲誓言 */
+  .nail-vow {
+    color: #ffd6e7;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    opacity: 0;
+    animation: fadeIn 2s ease 1s forwards;
   }
 
   /* iPad 奖品位 */
@@ -369,9 +407,16 @@
 
   <div class="header-title">✨ 给 最 可 爱 的 你 ✨</div>
 
-  <div class="photo-card">
-    <img src="7fcd6564888a94df657a8a33f71d0633.jpg" alt="我们的合照">
+  <div class="photo-album" id="photoAlbum">
+    <div class="photo-track" id="photoTrack">
+      <div class="photo-slide">
+        <img src="7fcd6564888a94df657a8a33f71d0633.jpg" alt="合照1">
+      </div>
+    </div>
+    <div class="photo-dots" id="photoDots"></div>
   </div>
+
+  <div class="nail-vow">一个立誓陪你做100次美甲的男人 💅</div>
 
   <div class="love-text" id="loveText">
     <span class="name">小羊 🐑</span>
@@ -644,6 +689,29 @@
     } else {
       clearInterval(musicInterval);
     }
+  }
+
+  // ==================== PHOTO ALBUM ====================
+  const photoTrack = document.getElementById('photoTrack');
+  const photoDots = document.getElementById('photoDots');
+  const slides = photoTrack.querySelectorAll('.photo-slide');
+  let currentSlide = 0;
+  const totalSlides = slides.length;
+
+  if (totalSlides > 1) {
+    slides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'photo-dot' + (i === 0 ? ' active' : '');
+      photoDots.appendChild(dot);
+    });
+
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      photoTrack.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+      photoDots.querySelectorAll('.photo-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentSlide);
+      });
+    }, 3500);
   }
 
   // ==================== BLIND BOXES ====================
