@@ -155,6 +155,12 @@
     transition: transform 0.3s ease;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    border: none;
+    outline: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    -webkit-appearance: none;
   }
   .blind-box:active { transform: scale(0.95); }
   .blind-box.opened { pointer-events: none; opacity: 0.6; pointer-events: none; }
@@ -372,27 +378,27 @@
   <div class="birthday-badge" id="birthdayBadge"></div>
 
   <div class="boxes-section" id="boxesSection">
-    <div class="blind-box box-1" data-box="1">
+    <button type="button" class="blind-box box-1" data-box="1">
       <div class="box-ribbon"></div>
       <div class="box-lid"></div>
       <div class="box-face box-front">
         <div class="box-question">?</div>
       </div>
-    </div>
-    <div class="blind-box box-2" data-box="2">
+    </button>
+    <button type="button" class="blind-box box-2" data-box="2">
       <div class="box-ribbon"></div>
       <div class="box-lid"></div>
       <div class="box-face box-front">
         <div class="box-question">?</div>
       </div>
-    </div>
-    <div class="blind-box box-3" data-box="3">
+    </button>
+    <button type="button" class="blind-box box-3" data-box="3">
       <div class="box-ribbon"></div>
       <div class="box-lid"></div>
       <div class="box-face box-front">
         <div class="box-question">?</div>
       </div>
-    </div>
+    </button>
   </div>
 
 </div>
@@ -711,18 +717,12 @@
     }), 1500);
   }
 
-  // 绑定事件（同时支持桌面 & 移动端）
+  // 绑定事件
   document.querySelectorAll('.blind-box').forEach(box => {
-    let fired = false;
-    const handler = (e) => {
-      if (fired) return;
-      fired = true;
+    box.addEventListener('click', (e) => {
       e.preventDefault();
       openBox(parseInt(box.dataset.box));
-      setTimeout(() => { fired = false; }, 500);
-    };
-    box.addEventListener('click', handler);
-    box.addEventListener('pointerdown', handler);
+    });
   });
   document.getElementById('musicBtn').addEventListener('click', toggleMusic);
   document.getElementById('overlay').addEventListener('click', closeCard);
